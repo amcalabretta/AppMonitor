@@ -7,7 +7,7 @@
 # You might use cron with 
 #####################################################
 # Variables
-export use_proxy=yes
+export use_proxy=no
 export proxy_ip=SET_PROXY_IP_HERE (if the above propery is set to yes)
 export proxy_port=SET_PROXY_PORT_HERE
 export proxy_usr=SET_PROXY_USER_HERE
