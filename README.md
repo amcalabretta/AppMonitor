@@ -9,6 +9,13 @@ It supports the following platforms:
  - Windows Phone
  - Windows RT
  
+AppMonitor uses a bounce of utilities (commonly used in *nix world) to download and elaborate the data from the various markets
+(appstore, google play and so on), namely they are:
+
+ - curl
+ - zip
+  
+ 
 The system is based on a set of scripts whose responsabilities are defined as follows:
 
  - main.sh
@@ -23,7 +30,7 @@ The system is based on a set of scripts whose responsabilities are defined as fo
    - proxy_usr: The user name used to connect trought the proxy.
    - proxy_pass: The password used to connect trought the proxy.
    - MAIN_DIR: The directory where the scritps are
-   - DATABASE_BIN: The path of the sqlite3 binary, it has been defined because you might want to compile it by yourself 
+   - DATABASE_BIN: The path of the sqlite3 binary, it has been defined because you might want to compile it by yourself (see above)
    - DATABASE_FILE: The path of the sqlite3 databse file.
    - IOS_DIR: The directory where the ios files are generated (you might define another cron tab to delete or tar these files)
    - LOGS_DIR: The directory where the logs are wrote (you might define another cron tab to delete or tar the logs)

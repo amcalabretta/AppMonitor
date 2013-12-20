@@ -1,0 +1,13 @@
+download the complete source code (NOT the amalgamation)
+
+http://beets.radbox.org/blog/sqlite-nightmare.html
+
+This is the curl command to issue in order to download the version 3.0.8
+curl -O http://www.sqlite.org/2013/sqlite-autoconf-3080200.tar.gz 
+
+CFRAGS="-DHAVE_USLEEP=1" ./configure
+
+make
+
+you should now have the sqlite3 binary.
+
