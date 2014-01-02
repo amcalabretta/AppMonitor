@@ -14,7 +14,8 @@ AppMonitor uses a bounce of utilities (commonly used in *nix world) to download 
 
  - curl
  - zip
-  
+ - xmllint
+ - xsltproc 
  
 The system is based on a set of scripts whose responsabilities are defined as follows:
 

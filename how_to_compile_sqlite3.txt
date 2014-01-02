@@ -11,3 +11,6 @@ make
 
 you should now have the sqlite3 binary.
 
+Copy the libsqlite.so.0.8.6 in /usr/lib 
+
+

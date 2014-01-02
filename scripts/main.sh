@@ -25,4 +25,8 @@ export DATE=$(date +"%Y%m%d")
 export DATE_PW=$(date -v-1w +"%Y%m%d")
 export DB_TIMESTAMP=$(date +%s)
 # Downloading the snapshot for today (ios)
-$SCRIPTS_DIR/ios.sh >> $LOGS_DIR/ios-ratings-$DATE.log
+$SCRIPTS_DIR/ios_download_data.sh >> $LOGS_DIR/ios-ratings-$DATE.log
+#updating the data (stars percentage and changes of average)
+$SCRIPTS_DIR/ios_update_data.sh >> $LOGS_DIR/ios-ratings-$DATE.log
+#downloading the missing comments
+$SCRIPTS_DIR/ios_update_comments.sh >> $LOGS_DIR/ios-ratings-$DATE.log

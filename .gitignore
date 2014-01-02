@@ -4,3 +4,5 @@
 *.jar
 *.war
 *.ear
+
+SQL/insert_apps.sql
