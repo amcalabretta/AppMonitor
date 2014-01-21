@@ -61,7 +61,8 @@ CREATE TABLE IOS_RELEASE_RATINGS
   perc_two_var int,
   perc_one_var int,
   PRIMARY KEY (app_id,timestamp),
-  FOREIGN KEY(app_id) REFERENCES IOS_APPLICATIONS(app_id)
+  FOREIGN KEY(app_id) REFERENCES IOS_APPLICATIONS(app_id),
+  FOREIGN KEY(release) REFERENCES IOS_RELEASES(release)
 );
 
 CREATE INDEX ts_idx_release ON IOS_RELEASE_RATINGS(timestamp);
