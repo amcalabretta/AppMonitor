@@ -1,0 +1,97 @@
+<project basedir="." name="Common Tasks for Stats app">
+	  <!--
+    Compile target
+    it expects the following parameters:
+     - src.dir       the directory where the .java files are
+     - echo.message  the message to be shown on the console
+     - class.path    the refclasspath to use
+-->
+
+  <target name="compile.target">
+    <echo message="${echo.message}" />
+    <echo message="|  - Compiling source files from ${src.dir} in ${build.dir}" />
+    <javac classpathref="${class.path}" debug="${javac.options.debug}"
+           deprecation="${javac.options.deprecation}" destdir="${build.dir}"
+           includeantruntime="false" optimize="${javac.options.optimize}"
+		   nowarn="on" source="${jvm.version}" target="${jvm.version}" encoding='UTF-8'>
+      <src path="${src.dir}" />
+    </javac>
+  </target>
+
+  <!--
+    Jar target
+     - jar.file      the name of the resulting jar file
+     - jar.dir       the directory where to store the jar file
+  -->
+
+  <target name="jar.target">
+    <echo message="${echo.message}" />
+    <echo message="|  - Creating ${jar.file} in ${jar.dir}" />
+    <tstamp>
+      <format pattern="dd/MM/yyyy hh:mm" property="dist.time" />
+    </tstamp>
+    <jar basedir="${build.dir}" jarfile="${jar.dir}/${jar.file}">
+      <manifest>
+        <attribute name="Build-Time" value="${dist.time}" />
+      </manifest>
+    </jar>
+  </target>
+
+  <!-- check if the dist.dir exists -->
+
+  <target name="check.dir">
+    <available file="${dir.to.check}" property="dir.present" type="dir"
+               value="presente" />
+    <property name="dir.present" value="assente" />
+    <if>
+      	<equals arg1="${dir.present}" arg2="assente" />
+    <then>
+        <mkdir dir="${dir.to.check}" />
+    </then>
+    </if>
+  </target>
+
+  <target name = "stop-tomcat-application">
+	   <echo message="Stopping the webapp ${web.context} from ${tomcat.manager.url}"/>
+       <catalina-stop url="${tomcat.manager.url}"
+                         username="${tomcat.username}"
+                         password="${tomcat.password}"
+                         path="/${web.context}"
+                         failonerror="true"/>
+	</target>
+
+	<target name = "start-tomcat-application">
+	    <echo message="Starting the webapp ${web.context} from ${tomcat.manager.url}"/>
+		<catalina-start url="${tomcat.manager.url}"
+                       username="${tomcat.username}"
+                       password="${tomcat.password}"
+                       path="/${war.file.name}"
+					   failonerror="true"/>
+	</target>
+
+	<target name = "undeploy-tomcat-application">
+		<echo message="Undeploying the webapp bound at ${war.file.name} from ${tomcat.manager.url}"/>
+		<catalina-undeploy url="${tomcat.manager.url}"
+                          username="${tomcat.username}"
+                          password="${tomcat.password}"
+                          path="/${war.file.name}"
+                          failonerror="true"/>
+	</target>
+
+	<target name = "deploy-tomcat-application">
+		<echo message="Deploying the webapp ${dist.dir}/${war.file.name}.war to ${tomcat.manager.url} bound to at ${war.file.name}"/>
+		<catalina-deploy url="${tomcat.manager.url}"
+                        username="${tomcat.username}"
+                        password="${tomcat.password}"
+                        path="/${war.file.name}"
+                        war="file:${dist.dir}/${war.file.name}.war"/>
+	</target>
+  
+  
+  <!-- deleting the build and dist directory -->
+  <target name="clean">
+  	<echo message="+---------------------------------------------------------------+" />
+    <echo message="|  - Deleting directory ${dir.to.clean}                         " />
+    <delete dir="${dir.to.clean}" />
+  </target>
+ </project>

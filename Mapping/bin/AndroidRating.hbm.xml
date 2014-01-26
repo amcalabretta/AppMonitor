@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+<class name="com.ing.mobile.model.dto.AndroidRating" table="ANDROID_RATINGS">
+    <composite-id>
+    	<key-property name="timestamp" column="timestamp" type="int"/>
+    	<key-property name="appId" column="app_id" type="int"/>
+	</composite-id>
+	<property name="fiveStars" column="five_stars" type="int"/>
+	<property name="fourStars" column="four_stars" type="int"/>
+	<property name="threeStars" column="three_stars" type="int"/>
+	<property name="twoStars" column="two_stars" type="int"/>
+	<property name="oneStar" column="one_star" type="int"/>
+	<property name="average" column="average" type="int"/>
+	<property name="total" column="total" type="int"/>
+	<property name="varTotal" column="var_total" type="int"/>
+	<property name="varAverage" column="var_average" type="int"/>
+	<property name="fiveStarsPerc" column="five_stars_perc" type="int"/>
+	<property name="fourStarsPerc" column="four_stars_perc" type="int"/>
+	<property name="threeStarsPerc" column="three_stars_perc" type="int"/>
+	<property name="twoStarsPerc" column="two_stars_perc" type="int"/>
+	<property name="oneStarPerc" column="one_star_perc" type="int"/>
+	<property name="fiveStarsPercVar" column="five_stars_perc_var" type="int"/>
+	<property name="fourStarsPercVar" column="four_stars_perc_var" type="int"/>
+	<property name="threeStarsPercVar" column="three_stars_perc_var" type="int"/>
+	<property name="twoStarsPercVar" column="two_stars_perc_var" type="int"/>
+	<property name="oneStarPercVar" column="one_star_perc_var" type="int"/>
+</class>
+</hibernate-mapping>

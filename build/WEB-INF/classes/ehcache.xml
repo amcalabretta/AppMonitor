@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="ehcache.xsd" name="STATS_CACHE_MANAGER">
+<diskStore path="/home/ubuntu/Stats/apache-tomcat-7.0.47/database/ehcache"/>
+<defaultCache
+    name="stats_defaut"
+	maxElementsInMemory="1000"
+	eternal="false"
+	timeToIdleSeconds="120"
+	timeToLiveSeconds="120"
+	overflowToDisk="true"/>
+
+<cache name="query.getApplications"
+	   maxEntriesLocalHeap="4"
+       eternal="true">
+	<persistence strategy="localTempSwap"/>
+</cache>
+</ehcache>

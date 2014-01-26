@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+<class name="com.ing.mobile.model.dto.IOSApplication" table="IOS_APPLICATIONS">
+    <id name="id" type="int" column="application_id">
+        <generator class="native"></generator>
+	</id>
+	<property name="appId" column="app_id" type="int"/>
+	<property name="code" column="app_code" type="string"/>
+	<property name="description" column="description" type="string"/>	
+</class>
+</hibernate-mapping>

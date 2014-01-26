@@ -1,0 +1,176 @@
+<project name="StatsApplication" basedir="." default="help">
+<property file="build.properties"/>
+<path id="catalina-ant-classpath">
+    <fileset dir="${basedir}/ant.libs">
+           <include name="catalina-ant.jar"/>
+           <include name="tomcat-coyote.jar"/>
+           <include name="tomcat-util.jar"/>
+		   <include name="tomcat-juli.jar"/>
+     </fileset>
+</path>
+
+<!-- Optional tasks for Ant -->
+<taskdef classpath="${basedir}/ant.libs/ant-contrib-1.0b3.jar" resource="net/sf/antcontrib/antcontrib.properties" />
+<!-- Tomcat tasks for ant -->
+<taskdef name="catalina-deploy" classname="org.apache.catalina.ant.DeployTask" classpathref="catalina-ant-classpath"/>
+<taskdef name="catalina-list" classname="org.apache.catalina.ant.ListTask" classpathref="catalina-ant-classpath"/>
+<taskdef name="catalina-reload" classname="org.apache.catalina.ant.ReloadTask" classpathref="catalina-ant-classpath"/>
+<taskdef name="catalina-findleaks" classname="org.apache.catalina.ant.FindLeaksTask" classpathref="catalina-ant-classpath"/>
+<taskdef name="catalina-resources" classname="org.apache.catalina.ant.ResourcesTask" classpathref="catalina-ant-classpath"/>
+<taskdef name="catalina-start" classname="org.apache.catalina.ant.StartTask" classpathref="catalina-ant-classpath"/>
+<taskdef name="catalina-stop" classname="org.apache.catalina.ant.StopTask" classpathref="catalina-ant-classpath"/>
+<taskdef name="catalina-undeploy" classname="org.apache.catalina.ant.UndeployTask" classpathref="catalina-ant-classpath"/>
+<import file="${basedir}/build-common.xml"/>
+
+	<path id="main.classpath">
+		<fileset dir="${build.dir}">
+			<include name="**/*.class" />
+		</fileset>
+		<fileset dir="${basedir}/${ext.libs.dir}">
+			<include name="*.jar" />
+		</fileset>
+		<fileset dir="${basedir}/${as.libs.dir}">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+ 	<tstamp>
+	  	<format property="BUILD_DATE" pattern="dd MMMM yyyy" locale="en,UK"/>
+		<format property="BUILD_TIME" pattern="hh:mm aa" locale="en,UK"/>
+	</tstamp>
+	<!-- Default Task Showing the variables defined -->
+	<target name="show">
+		<echo message="Properties defined:"/>
+		<echo message="Tomcat root     :${tomcat.root}"/>
+		<echo message="Database        :${database.dir}\${database.file}"/>    
+		<echo message="Database cache  :${database.cache.dir}"/>    
+		<echo message="Build dir       :${build.dir}"/>    
+		<echo message="Dist dir        :${dist.dir}"/>    
+		<echo message="External libs   :${ext.libs.dir}"/>
+		<echo message="Current version :${version}"/>
+		<echo message="Version name    :${version-name}"/>
+	</target>
+	<target name="help">
+		<echo message="Usage" />
+		<echo message="ant show -q shows the variable defined"/>
+		<echo message="ant build -q builds the war file (${war.file.name}.war) is ${dist.dir}"/>
+		<echo message="ant deploy-webapp deploys the webapp to ${tomcat.manager.url}"/>
+		<echo message="ant undeploy-webapp undeploys the webapp to ${tomcat.manager.url}"/>
+		<echo message="ant stop-webapp stops the webapp via ${tomcat.manager.url}"/>
+		<echo message="ant start-webapp starts the webapp via ${tomcat.manager.url}"/>
+	</target>
+	<!--Build-->
+	<target name="build">
+		<antcall target="clean">
+			<param name="dir.to.clean" value="${build.dir}" />
+		</antcall>
+		<antcall target="clean">
+			<param name="dir.to.clean" value="${dist.dir}" />
+		</antcall>
+		<antcall target="check.dir">
+		    <param name="dir.to.check" value="${dist.dir}" />
+		</antcall>
+		<antcall target="check.dir">
+		    <param name="dir.to.check" value="${build.dir}/WEB-INF" />
+		</antcall>
+		<antcall target="check.dir">
+		    <param name="dir.to.check" value="${build.dir}/WEB-INF/classes" />
+		</antcall>
+		<antcall target="check.dir">
+		    <param name="dir.to.check" value="${build.dir}/WEB-INF/lib" />
+		</antcall>
+		<antcall target="check.dir">
+		    <param name="dir.to.check" value="${build.dir}/META-INF" />
+		</antcall>
+		<!-- Build the model -->
+		<antcall target="compile.target">
+	      <param name="src.dir" value="${basedir}/${model.src.dir}" />
+		  <param name="build.dir" value="${basedir}/${build.dir}/WEB-INF/classes" />
+	      <param name="class.path" value="main.classpath" />
+	      <param name="echo.message" value="| Building Model from ${basedir}/${model.src.dir} to ${build.dir}" />
+	    </antcall>
+		<!-- Build the hibernate interface -->
+		<antcall target="compile.target">
+	      <param name="src.dir" value="${basedir}/${hibernate.src.dir}" />
+		  <param name="build.dir" value="${basedir}/${build.dir}/WEB-INF/classes" />
+	      <param name="class.path" value="main.classpath" />
+	      <param name="echo.message" value="| Building Hibernate SQL Lite from ${basedir}/${hibernate.src.dir} to ${build.dir}" />
+	    </antcall>
+		<!-- Copying the Mapping and Hibernate configuration files -->
+		<copy todir="${basedir}/${build.dir}/WEB-INF/classes">
+					<fileset dir="${hibernate.mapping.dir}">
+					     <include name="**/*.xml"/>
+					</fileset>
+		</copy>
+		<!-- Replacing the database location -->
+		<replace file="${basedir}/${build.dir}/WEB-INF/classes/hibernate.cfg.xml" token="$DATABASE_LOCATION" value="${database.dir}${database.file}"/>
+		<!-- Replacing the database cache location -->
+		<replace file="${basedir}/${build.dir}/WEB-INF/classes/ehcache.xml" token="$DATABASE_CACHE_LOCATION" value="${database.cache.dir}"/>
+		<!-- Build the service layer -->
+		<antcall target="compile.target">
+	      <param name="src.dir" value="${basedir}/${service.src.dir}" />
+		  <param name="build.dir" value="${basedir}/${build.dir}/WEB-INF/classes" />
+	      <param name="class.path" value="main.classpath" />
+		  <param name="echo.message" value="| Building Service module from ${basedir}/${service.src.dir} to ${build.dir}" />
+	    </antcall>
+		<!-- build the web layer -->
+		<antcall target="compile.target">
+	      <param name="src.dir" value="${basedir}/${web.src.dir}" />
+		  <param name="build.dir" value="${basedir}/${build.dir}/WEB-INF/classes" />
+	      <param name="class.path" value="main.classpath" />
+	      <param name="echo.message" value="| Building Service module from ${basedir}/${web.src.dir} to ${build.dir}" />
+	    </antcall>
+		<!-- Copy the log4j configuratio file -->
+		<copy todir="${basedir}/${build.dir}/WEB-INF/classes">
+				<fileset dir="${basedir}/${web.src.dir}">
+					<include name="log4j.properties"/>
+				</fileset>
+		</copy>
+		<!-- Copy the resources -->
+		<copy todir="${basedir}/${build.dir}">
+				<fileset dir="${basedir}/${web.resources.dir}">
+					<exclude name="**/META-INF"/>
+					<exclude name="**/WEB-INF"/>
+				</fileset>
+		</copy>
+		<!-- Build the war file -->
+       <zip destfile="${dist.dir}/${war.file.name}.war"
+          basedir="${basedir}/${build.dir}"
+          excludes="**/CVS*"/>
+	</target>
+	<target name = "stop-webapp">
+			<antcall target="stop-tomcat-application">
+			<param name="web.context" value="${war.file.name}" />
+			<param name="tomcat.manager.url" value="${tomcat.manager.url}" />
+			<param name="tomcat.username" value="${tomcat.username}" />
+			<param name="tomcat.password" value="${tomcat.password}" />
+		</antcall>
+	</target>
+	<target name = "start-webapp">
+			<antcall target="start-tomcat-application">
+			<param name="web.context" value="${war.file.name}" />
+			<param name="tomcat.manager.url" value="${tomcat.manager.url}" />
+			<param name="tomcat.username" value="${tomcat.username}" />
+			<param name="tomcat.password" value="${tomcat.password}" />
+		</antcall>
+	</target>
+	<target name = "deploy-webapp">
+			<antcall target="deploy-tomcat-application">
+			<param name="dist.dir" value="${dist.dir}" />
+			<param name="war.file.name" value="${war.file.name}" />
+			<param name="tomcat.manager.url" value="${tomcat.manager.url}" />
+			<param name="tomcat.username" value="${tomcat.username}" />
+			<param name="tomcat.password" value="${tomcat.password}" />
+		</antcall>
+	</target>
+	<target name = "undeploy-webapp">
+			<antcall target="undeploy-tomcat-application">
+			<param name="war.file.name" value="${war.file.name}" />
+			<param name="tomcat.manager.url" value="${tomcat.manager.url}" />
+			<param name="tomcat.username" value="${tomcat.username}" />
+			<param name="tomcat.password" value="${tomcat.password}" />
+		</antcall>
+	</target>
+	
+	
+	
+</project>
