@@ -4,10 +4,10 @@ AppMonitor
 AppMonitor is a complete system allowing to download stats (in terms of reviews done by users) of mobile applications.
 It supports the following platforms:
 
- - iOs
- - Android
- - Windows Phone
- - Windows RT
+ -- iOs
+ -- Android
+ -- Windows Phone
+ -- Windows RT
  
 AppMonitor uses a bounce of utilities (commonly used in *nix world) to download and elaborate the data from the various markets
 (appstore, google play and so on), namely they are:
